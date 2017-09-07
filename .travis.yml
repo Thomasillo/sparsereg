@@ -12,6 +12,7 @@ allow_failures:
 
 install:
   - pip install pipenv
-  - pipenv install
+  - pipenv install --dev
+  - pipenv run python setup.py install
 script:
   - pipenv run py.test

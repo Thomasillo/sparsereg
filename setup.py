@@ -25,7 +25,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 pfile = Project().parsed_pipfile
 requirements = convert_deps_to_pip(pfile['packages'], r=False)
-print(requirements)
 test_requirements = convert_deps_to_pip(pfile['dev-packages'], r=False)
 
 # Import the README and use it as the long-description.

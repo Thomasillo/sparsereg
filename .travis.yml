@@ -2,17 +2,16 @@ language: python
 python:
   - "3.5"
   - "3.6"
-  #- "3.7-dev"
+  - "3.7-dev"
   #- "pypy-5.3.1"
 
 
 allow_failures:
-  #- python: "3.7-dev"
+  - python: "3.7-dev"
   #- python: "pypy-5.3.1"
 
 install:
-  - pip install -r requirements.txt
-  - pip install .
-  - pip install pytest matplotlib
+  - pip install pipenv
+  - pipenv install
 script:
-  - py.test
+  - pipenv run py.test

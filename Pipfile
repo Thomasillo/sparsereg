@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+twine = "*"
+
+[packages]
+numpy = "*"
+joblib = "*"
+toolz = "*"
+sympy = "*"
+
+[packages.scikit-learn]
+extras = [ "alldeps",]
+version = ">=0.19"

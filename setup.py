@@ -1,4 +1,4 @@
-"""                                                 
+"""
    _________  ____ ______________  ________  ____ _
   / ___/ __ \/ __ `/ ___/ ___/ _ \/ ___/ _ \/ __ `/
  (__  ) /_/ / /_/ / /  (__  )  __/ /  /  __/ /_/ /
@@ -12,6 +12,8 @@ import sys
 from shutil import rmtree
 
 from setuptools import find_packages, setup, Command
+from pipenv.project import Project
+from pipenv.utils import convert_deps_to_pip
 
 NAME = "sparsereg"
 DESCRIPTION = 'Modern sparse linear regression'
@@ -21,8 +23,10 @@ AUTHOR = 'Markus Quade'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, "requirements.txt"), "r") as f:
-    REQUIRED = f.readlines()
+pfile = Project().parsed_pipfile
+requirements = convert_deps_to_pip(pfile['packages'], r=False)
+print(requirements)
+test_requirements = convert_deps_to_pip(pfile['dev-packages'], r=False)
 
 # Import the README and use it as the long-description.
 # Note: this will only work if 'README.rst' is present in your MANIFEST.in file!
@@ -77,7 +81,9 @@ setup(
     author_email=EMAIL,
     url=URL,
     packages=find_packages(exclude=["test", "example"]),
-    install_requires=REQUIRED,
+    install_requires=requirements,
+    test_requires=test_requirements,
+    setup_requires=["pipenv"],
     license='MIT',
     classifiers=[
         'Programming Language :: Python',

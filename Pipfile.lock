@@ -1,0 +1,92 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "36a9c0b5c647f9dbadf6dc8828487545ecd57da9164fc6e6bd04b84b56e6a4bd"
+        },
+        "host-environment-markers": {
+            "implementation_name": "cpython",
+            "implementation_version": "3.5.3",
+            "os_name": "posix",
+            "platform_machine": "x86_64",
+            "platform_python_implementation": "CPython",
+            "platform_release": "4.10.0-32-generic",
+            "platform_system": "Linux",
+            "platform_version": "#36-Ubuntu SMP Tue Aug 8 12:10:06 UTC 2017",
+            "python_full_version": "3.5.3",
+            "python_version": "3.5",
+            "sys_platform": "linux"
+        },
+        "pipfile-spec": 1,
+        "requires": {},
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "joblib": {
+            "version": "==0.11"
+        },
+        "mpmath": {
+            "version": "==0.19"
+        },
+        "numpy": {
+            "version": "==1.13.1"
+        },
+        "scikit-learn": {
+            "version": "==0.19.0"
+        },
+        "scipy": {
+            "version": "==0.19.1"
+        },
+        "sympy": {
+            "version": "==1.1.1"
+        },
+        "toolz": {
+            "version": "==0.8.2"
+        }
+    },
+    "develop": {
+        "certifi": {
+            "version": "==2017.7.27.1"
+        },
+        "chardet": {
+            "version": "==3.0.4"
+        },
+        "coverage": {
+            "version": "==4.4.1"
+        },
+        "idna": {
+            "version": "==2.6"
+        },
+        "pkginfo": {
+            "version": "==1.4.1"
+        },
+        "py": {
+            "version": "==1.4.34"
+        },
+        "pytest": {
+            "version": "==3.2.1"
+        },
+        "pytest-cov": {
+            "version": "==2.5.1"
+        },
+        "requests": {
+            "version": "==2.18.4"
+        },
+        "requests-toolbelt": {
+            "version": "==0.8.0"
+        },
+        "tqdm": {
+            "version": "==4.15.0"
+        },
+        "twine": {
+            "version": "==1.9.1"
+        },
+        "urllib3": {
+            "version": "==1.22"
+        }
+    }
+}

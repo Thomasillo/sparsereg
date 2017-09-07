@@ -11,8 +11,6 @@ allow_failures:
   #- python: "pypy-5.3.1"
 
 install:
-  - pip install pipenv
-  - pipenv install --dev
-  - pipenv run python setup.py install
+  - pip install pipenv; pipenv lock; pipenv install --dev
 script:
   - pipenv run py.test

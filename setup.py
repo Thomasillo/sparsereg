@@ -12,8 +12,13 @@ import sys
 from shutil import rmtree
 
 from setuptools import find_packages, setup, Command
-from pipenv.project import Project
-from pipenv.utils import convert_deps_to_pip
+
+try:
+    from pipenv.project import Project
+    from pipenv.utils import convert_deps_to_pip
+except ImportError:
+    print("Setup needs pipenv")
+    sys.exit(1)
 
 NAME = "sparsereg"
 DESCRIPTION = 'Modern sparse linear regression'
@@ -82,7 +87,6 @@ setup(
     packages=find_packages(exclude=["test", "example"]),
     install_requires=requirements,
     test_requires=test_requirements,
-    setup_requires=["pipenv"],
     license='MIT',
     classifiers=[
         'Programming Language :: Python',

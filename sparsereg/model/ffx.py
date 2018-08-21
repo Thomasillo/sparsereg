@@ -50,7 +50,9 @@ class FFXModel(Pipeline):
 
 
 class FFXElasticNet(PrintMixin, ElasticNet):
+    """Mixin, implements only the `score` method."""
     def score(self, x, y):
+        """Score using the nrmse."""
         return nrmse(self.predict(x), y)
 
 
@@ -60,6 +62,15 @@ class FFXRationalElasticNet(RationalFunctionMixin, FFXElasticNet):
 
 Strategy = namedtuple("Strategy", "exponents operators consider_products index base")
 
+Strategy.__doc__ = """
+Class for holding strategy data.
+
+:param iterable exponents: exponents to consider
+:param dict operators: mapping str (name) to callable (operator)
+:param bool consider_products: Whether to consider products of features as features
+:param slice index: Which columns of the features provided to `fit` will be used.
+:param type base: type of FFX variant to use.
+"""
 
 def build_strategies(exponents, operators, rational=True):
     strategies = []
@@ -88,6 +99,11 @@ def build_strategies(exponents, operators, rational=True):
 
 
 def _get_alphas(alpha_max, num_alphas, eps):
+    """Return list of alphas between `alpha_max` and `alpha_max*eps` in descending order.
+
+    The returned alphas will be logarithmically spaced mostly.
+    Close to zero `app. 1/4 * num_alphas` will be inserted with a 10x finer spacing.
+    """
     st, fin = np.log10(alpha_max*eps), np.log10(alpha_max)
     alphas1 = np.logspace(st, fin, num=num_alphas*10)[::-1][:int(num_alphas/4)]
     alphas2 = np.logspace(st, fin, num=num_alphas)
@@ -217,7 +233,57 @@ class FFX(BaseEstimator, RegressorMixin):
                  eps=1e-5, random_state=None, strategies=None, target_score=0.01,
                  n_tail=5, decision="min", max_complexity=50,
                  exponents=[1, 2], operators={}, n_jobs=1, rational=True, **kw):
+        """Fast Function eXtraction model.
 
+        :param iterable l1_ratios: Determines ratio of l1 to l2 penalty term
+        :param int num_alphas: Determines numbers of different ratios of cost function to penalty term. `0<= l1_ratio <= 1`.
+        :param float eps: ratio of smallest to largest alpha considered. (`0 < eps < 1`)
+        :param int random_state:
+        :param iterable strategies: `Strategy` s to consider
+        :param float target_score: break condition on cost function for innermost loop
+        :param int n_tail: length of path (in alpha) to check into past for saturation
+        :param str decision: one of ``'weight'`` or ``'min'``
+        :param float max_complexity: break condition on model complexity for innermost loop
+        :param iterable exponents:
+        :param dict operators:
+        :param int n_jobs:
+        :param bool rational:
+        :param kw:
+
+        The implemented algorithm is found in `http://dx.doi.org/10.1007/978-1-4614-1770-5_13`
+
+        For each `Strategy`, an elastic net optimizer will be run with many combinations of l1_ratio and alpha.
+        A `l1_ratio` of 0 corresponds to ridge regression (only l2 penalty), a `l1_ratio` of 1 corresponds to
+        LASSO regression (only l1 penalty).
+        `alpha` determines the amount of regularization, where `alpha=0` would mean now regularization and
+        `alpha -> infty` would mean only regularization.
+        For details on the used elastic net algorithm see :class:`sklearn.linear_model.ElasticNet`.
+
+        The number of alphas is loosely determined by `num_alpha` (the actual number is close and never smaller).
+        The maximum value of the considered `alpha` is determined dynamically based on Tibshirani's "Strong Rules", see
+        `https://doi.org/10.1111/j.1467-9868.2011.01004.x`_
+        The rule gives an `alpha` for which the fitted model will (in most relevant cases)
+        have a complexity of 0 (no nonzero terms).
+        This maximum alpha also depends on the l1_ratio, therefore the iteration over alpha takes place
+        in the innermost loop.
+
+        The innermost loop would iterate from the maximum alpha to `eps` times the maximum alpha.
+        With increasing `alpha`, the complexity (number of non-zero terms) is expected to increase, whereas the
+        cost (nrmse evaluated on the training set) is expected to decrease.
+
+        The innermost loop has three break conditions:
+
+        1. train_score
+           If the cost is less or equal to `target_score`
+        2. complexity
+           If the complexity  is greater or equal to `max_complexity`
+        3. saturation
+           No significant improvement in the cost during the last `n_tail` iterations.
+           (Significant -> last 4 decimal digits)
+
+        `https://en.wikipedia.org/wiki/Akaike_information_criterion`
+
+        """
         self.l1_ratios = l1_ratios
         self.num_alphas = num_alphas
         self.eps = eps
